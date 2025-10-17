@@ -36,5 +36,6 @@ APhysicsProjectile::APhysicsProjectile()
 
 void APhysicsProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// @TODO: Handle impact
+	if (OtherActor && OtherActor != this && m_OwnerWeapon) m_OwnerWeapon->ApplyDamage(OtherActor, Hit, this);
+	if (m_DestroyOnHit) Destroy();
 }

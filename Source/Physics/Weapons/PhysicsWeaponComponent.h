@@ -1,64 +1,73 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "WeaponDamageType.h"
+#include "Engine/EngineTypes.h"
+#include "CollisionQueryParams.h"
 #include "PhysicsWeaponComponent.generated.h"
 
-class APhysicsCharacter;
 
-UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class APhysicsCharacter;
+class APhysicsProjectile;
+class UWeaponDamageType;
+class UDamageType;
+
+UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PHYSICS_API UPhysicsWeaponComponent : public USkeletalMeshComponent
 {
-	GENERATED_BODY()
+  GENERATED_BODY()
 
 public:
 
-	/** Sound to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	USoundBase* FireSound;
-	
-	/** AnimMontage to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UAnimMontage* FireAnimation;
+  /** Sound to play each time we fire */
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+  USoundBase* FireSound;
 
-	/** Gun muzzle's offset from the characters location */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	FVector MuzzleOffset;
+  /** AnimMontage to play each time we fire */
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+  UAnimMontage* FireAnimation;
 
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputMappingContext* FireMappingContext;
+  /** Gun muzzle's offset from the characters location */
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+  FVector MuzzleOffset;
 
-	/** Fire Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputAction* FireAction;
+  /** MappingContext */
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+  class UInputMappingContext* FireMappingContext;
 
-	/** Weapon damage config*/
-	UPROPERTY(Instanced, EditAnywhere, BlueprintReadOnly, Category=Damage, meta=(AllowPrivateAccess = "true"))
-	UWeaponDamageType* m_WeaponDamageType;
+  /** Fire Input Action */
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+  class UInputAction* FireAction;
 
-	/** Sets default values for this component's properties */
-	UPhysicsWeaponComponent();
+  /** Weapon damage config*/
+  UPROPERTY(Instanced, EditAnywhere, BlueprintReadOnly, Category = Damage, meta = (AllowPrivateAccess = "true"))
+  UWeaponDamageType* m_WeaponDamageType;
 
-	/** Attaches the actor to a FirstPersonCharacter */
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	bool AttachWeapon(APhysicsCharacter* TargetCharacter);
+  /** Sets default values for this component's properties */
+  UPhysicsWeaponComponent();
 
-	/** Make the weapon Fire a Projectile */
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	virtual void Fire();
+  /** Attaches the actor to a FirstPersonCharacter */
+  UFUNCTION(BlueprintCallable, Category = "Weapon")
+  bool AttachWeapon(APhysicsCharacter* TargetCharacter);
 
+  /** Make the weapon Fire a Projectile */
+  UFUNCTION(BlueprintCallable, Category = "Weapon")
+  virtual void Fire();
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Damage)
+  float m_ImpulseStrength;
+
+  virtual void ApplyDamage(AActor* OtherActor, FHitResult HitInfo, APhysicsProjectile* Projectile = nullptr);
 protected:
 
-	virtual void BeginPlay() override;
-	/** Ends gameplay for this component. */
-	UFUNCTION()
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  virtual void BeginPlay() override;
+  /** Ends gameplay for this component. */
+  UFUNCTION()
+  virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
-	/** The Character holding this weapon*/
-	APhysicsCharacter* Character;
+  /** The Character holding this weapon*/
+  APhysicsCharacter* Character;
+
+  TArray<AActor*> m_lActorsToIgnore;
 };

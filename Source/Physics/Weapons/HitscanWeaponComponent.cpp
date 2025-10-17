@@ -13,7 +13,7 @@ void UHitscanWeaponComponent::Fire()
 {
 	Super::Fire();
 
-  if (!IsValid(Character) || IsValid(Character->FirstPersonCameraComponent)) return;
+  if (!GetOwner()) return;
 
   FVector vStart = GetComponentLocation();
   FVector vForwardVector = Character->FirstPersonCameraComponent->GetForwardVector();
@@ -23,7 +23,7 @@ void UHitscanWeaponComponent::Fire()
   FCollisionQueryParams oParams;
   if (GetWorld()->LineTraceSingleByChannel(oHitResult, vStart, vEnd, ECC_Visibility, oParams)) {
     AActor* pOtherActor = oHitResult.GetActor();
-    //ApplyDamage(pOtherActor, oHitResult);
+    ApplyDamage(pOtherActor, oHitResult);
     onHitscanImpact.Broadcast(pOtherActor, oHitResult.ImpactPoint, vForwardVector);
   }
 }

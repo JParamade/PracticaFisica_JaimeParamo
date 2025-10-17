@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool m_DestroyOnHit;
 
+	UPROPERTY(EditAnywhere)
+	float m_Radius;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Damage)
 	UPhysicsWeaponComponent* m_OwnerWeapon;
 public:
